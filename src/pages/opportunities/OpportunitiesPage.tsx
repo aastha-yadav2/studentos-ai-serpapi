@@ -53,6 +53,7 @@ import {
 import { buildOpportunityRadar } from "@/lib/opportunities/radar/radarService"
 import { RadarWidget } from "@/components/radar/RadarWidget"
 import { OpportunityIntelligenceDrawer } from "@/components/opportunities/OpportunityIntelligenceDrawer"
+import { FreshOpportunitiesSection } from "@/components/opportunities/FreshOpportunitiesSection"
 import {
   generateOpportunityIntelligence,
   type OpportunityIntelligenceResult,
@@ -135,6 +136,7 @@ export function OpportunitiesPage() {
   const [selectedSanityKnowledge, setSelectedSanityKnowledge] = useState<SanityOpportunityKnowledge | null>(null)
   const [selectedIntelligenceResult, setSelectedIntelligenceResult] = useState<OpportunityIntelligenceResult | null>(null)
   const [intelligenceStudentContext, setIntelligenceStudentContext] = useState<StudentContextPayload | null>(null)
+  const [studentContextPayload, setStudentContextPayload] = useState<StudentContextPayload | null>(null)
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
 
   // Loading & Feedback states
@@ -200,6 +202,7 @@ export function OpportunitiesPage() {
           internshipInterests: profile?.internship_goals ?? [],
           hackathonInterests: profile?.hackathon_interests ?? [],
         }
+        setStudentContextPayload(studentContext)
 
         // Cache Invalidation & Deterministic Match pre-computation for ALL catalog opportunities
         const matchMap = new Map<string, ComprehensiveMatchResult>()
@@ -308,6 +311,7 @@ export function OpportunitiesPage() {
         internshipInterests: profile?.internship_goals ?? [],
         hackathonInterests: profile?.hackathon_interests ?? [],
       }
+      setStudentContextPayload(studentContext)
 
       const matchMap = new Map<string, ComprehensiveMatchResult>()
       matchList.forEach((m) => {
@@ -698,6 +702,9 @@ export function OpportunitiesPage() {
       {/* TAB 1: CATALOG VIEW */}
       {activeTab === "catalog" && (
         <div className="space-y-6">
+          {/* Fresh Opportunities Discovery Section */}
+          <FreshOpportunitiesSection studentContext={studentContextPayload} />
+
           {/* Controls: Search, Filter, Sort */}
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div className="relative flex-1 max-w-md">

@@ -1,5 +1,5 @@
 import type { Session } from "@supabase/supabase-js"
-import { supabaseUrl } from "@/lib/supabase"
+import { supabaseUrl } from "../supabase"
 
 export type AIRequestType = "planner" | "resume_review" | "personalized_study_plan" | "career_advice" | "goal_recommendations" | "reflection_analysis" | "reflection_coaching" | "task_assistance" | "interview_preparation" | "essay_improvement" | "communication_draft" | "opportunity_match" | "opportunity_prep_plan" | "opportunity_intelligence" | "opportunity_qa"
 export type AIResult<T> = { data: T; source: "groq" | "cache"; fallback: false; trace?: string[] }
