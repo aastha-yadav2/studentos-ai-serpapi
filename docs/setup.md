@@ -20,6 +20,34 @@ Authentication is required in every environment. Create a test user in Supabase 
 
 **Backend:** run `supabase db push`, set the Gemini secret, then deploy `ai-router` and `ai-configuration`. Confirm `/ai-configuration` reports `configured: true` while authenticated.
 
+## Google OAuth Setup Checklist
+
+To enable Google Sign-In in production and local environments:
+
+1. **Google Cloud Console Setup**:
+   - Go to [Google Cloud Console](https://console.cloud.google.com/) → APIs & Services → Credentials.
+   - Create an **OAuth 2.0 Client ID** with Application Type: **Web application**.
+   - Add Authorized Redirect URIs:
+     `https://<your-supabase-project-ref>.supabase.co/auth/v1/callback`
+   - Save your **Client ID** and **Client Secret**.
+
+2. **Supabase Provider Setup**:
+   - Open [Supabase Dashboard](https://supabase.com/dashboard) → **Authentication** → **Providers** → **Google**.
+   - Toggle **Enable Google provider**.
+   - Enter your Google **Client ID** and **Client Secret**.
+   - Copy the callback URL displayed and confirm it matches the URI set in Google Cloud Console.
+
+3. **Supabase URL Configuration**:
+   - Go to **Authentication** → **URL Configuration**.
+   - Set **Site URL**: `https://studentos-ai-phi.vercel.app`
+   - Add **Redirect URLs**:
+     - `https://studentos-ai-phi.vercel.app/auth`
+     - `http://localhost:5173/auth`
+     - `https://studentos-ai-phi.vercel.app/**`
+     - `http://localhost:5173/**`
+
+> **Note**: Never put Google Client ID or Client Secret in `VITE_` frontend environment variables or client-side code. Secrets are securely managed strictly inside Supabase Auth.
+
 ## Troubleshooting
 
 | Symptom | Check |

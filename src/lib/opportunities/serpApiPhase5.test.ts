@@ -3,7 +3,6 @@ import {
   deduplicateCandidates,
   normalizeSerpApiResult,
   inferOpportunityTypeSignal,
-  discoverFreshOpportunities,
   type DiscoveredOpportunityCandidate,
 } from "./serpApiOpportunityDiscovery"
 import { evaluateDiscoveredCandidate } from "./serpApiOpportunityAdapter"

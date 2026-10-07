@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react"
+import { useState, useEffect, type FormEvent } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 import { GraduationCap } from "lucide-react"
 import { useAuth } from "@/auth/auth-provider"
@@ -20,6 +20,31 @@ export function AuthPage() {
   const navigate = useNavigate()
   const location = useLocation()
   const destination = (location.state as { from?: string } | null)?.from ?? "/app"
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search)
+    const rawHash = location.hash.startsWith("#") ? location.hash.substring(1) : location.hash
+    const hashParams = new URLSearchParams(rawHash)
+
+    const errorDesc = searchParams.get("error_description") || hashParams.get("error_description")
+    const err = searchParams.get("error") || hashParams.get("error")
+
+    if (errorDesc || err) {
+      const timer = window.setTimeout(() => {
+        if (errorDesc) {
+          const decoded = decodeURIComponent(errorDesc.replace(/\+/g, " "))
+          if (decoded.toLowerCase().includes("unsupported provider") || decoded.toLowerCase().includes("provider is not enabled")) {
+            setError("Google Sign-In is not enabled in your Supabase project. Please enable the Google provider in Supabase Dashboard → Authentication → Providers.")
+          } else {
+            setError(decoded)
+          }
+        } else if (err) {
+          setError(`Authentication failed: ${err}`)
+        }
+      }, 0)
+      return () => window.clearTimeout(timer)
+    }
+  }, [location.search, location.hash])
 
   function switchMode(nextMode: Mode) {
     setMode(nextMode)

@@ -38,7 +38,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     session, user: session?.user ?? null, loading, configurationError: supabaseConfigError,
     async signIn(credentials) { if (!supabase) return { error: supabaseConfigError }; const { error } = await supabase.auth.signInWithPassword(credentials); return { error: error?.message ?? null } },
     async signUp({ email, password }) { if (!supabase) return { error: supabaseConfigError, needsEmailConfirmation: false }; const { data, error } = await supabase.auth.signUp({ email, password, options: { emailRedirectTo: `${window.location.origin}/auth` } }); return { error: error?.message ?? null, needsEmailConfirmation: !data.session && !error } },
-    async signInWithGoogle() { if (!supabase) return { error: supabaseConfigError }; const { error } = await supabase.auth.signInWithOAuth({ provider: "google", options: { redirectTo: `${window.location.origin}/app` } }); return { error: error?.message ?? null } },
+    async signInWithGoogle() {
+      if (!supabase) return { error: supabaseConfigError }
+      const origin = typeof window !== "undefined" ? window.location.origin : "https://studentos-ai-phi.vercel.app"
+      const redirectTo = `${origin}/auth`
+      const { error } = await supabase.auth.signInWithOAuth({ provider: "google", options: { redirectTo } })
+      if (error) {
+        const msg = error.message || ""
+        if (
+          msg.toLowerCase().includes("unsupported provider") ||
+          msg.toLowerCase().includes("provider is not enabled") ||
+          msg.toLowerCase().includes("validation_failed") ||
+          error.status === 400
+        ) {
+          return {
+            error: "Google Sign-In is not enabled in your Supabase project. Please enable the Google provider in Supabase Dashboard → Authentication → Providers.",
+          }
+        }
+        return { error: msg }
+      }
+      return { error: null }
+    },
     async resetPassword(email) { if (!supabase) return { error: supabaseConfigError }; const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: `${window.location.origin}/auth` }); return { error: error?.message ?? null } },
     async signOut() { if (!supabase) return { error: supabaseConfigError }; const { error } = await supabase.auth.signOut(); return { error: error?.message ?? null } },
   }), [loading, session])

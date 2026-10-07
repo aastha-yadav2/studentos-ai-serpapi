@@ -52,8 +52,11 @@ export function OpportunityIntelligenceDrawer({
 
   // Reset QA history whenever selected opportunity changes
   useEffect(() => {
-    setQaHistory([])
-    setQaInput("")
+    const timer = window.setTimeout(() => {
+      setQaHistory([])
+      setQaInput("")
+    }, 0)
+    return () => window.clearTimeout(timer)
   }, [opportunity?.id])
 
   if (!isOpen) return null
